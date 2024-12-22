@@ -6,15 +6,19 @@ class Transaction:
         self.signature = None
 
     def sign_transaction(self, private_key):
-        if self.sender == "SYSTEM":  # System transaction, no sign required
+        if self.sender == "SYSTEM":  
             return
         data = f"{self.sender}{self.receiver}{self.amount}"
-        self.signature = hash(data.encode('utf-8') + private_key.encode('utf-8')).hexdigest() 
+        self.signature = self.simple_hash(data + private_key)
 
     def is_valid(self):
         if self.sender == "SYSTEM":
-            return True  # System transactions always validate
+            return True  
         if not self.signature:
-            return False  # Sign should be correctly
+            return False  
         data = f"{self.sender}{self.receiver}{self.amount}"
-        return self.signature == hash(data.encode('utf-8') + self.sender.encode('utf-8')).hexdigest()
+        return self.signature == self.simple_hash(data + self.sender)
+
+    def simple_hash(self, data):
+        hash_value = sum(bytearray(data, 'utf-8'))
+        return str(hash_value)  

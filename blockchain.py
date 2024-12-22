@@ -4,8 +4,9 @@ class Blockchain:
     def __init__(self):
         self.chain = [self.create_genesis_block()]
         self.difficulty = 4
-        self.pending_transactions = []  # List of not approved transactions
-        self.reward = 50  # Reward for mining        self.balances = {"SYSTEM": float("inf")}
+        self.pending_transactions = [] 
+        self.reward = 50  
+        self.balances = {};
     def create_genesis_block(self):
         return Block(0, ["Genesis Block"], "0")
     def get_latest_block(self):
