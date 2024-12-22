@@ -1,51 +1,59 @@
 from block import Block
 from transaction import Transaction
 class Blockchain:
-    def __init__(self):
-        self.chain = [self.create_genesis_block()]
-        self.difficulty = 4
-        self.pending_transactions = [] 
-        self.reward = 50  
-        self.balances = {};
-    def create_genesis_block(self):
-        return Block(0, ["Genesis Block"], "0")
-    def get_latest_block(self):
-        return self.chain[-1]
+    def __init__(self, balances):
+        '''
+        To create a blockchain object it is needed to provide a dictionary balances with no more than 10 entries with keys denoting addresses and values specifying the amount.
+        The balances will be hardcoded into the genesis block as transactions from the SYSTEM address.
+        '''
+        self._pending_transactions = []
+        self._balances = balances
+        transactions = [str(Transaction("SYSTEM", address, amount)) for (address, amount) in balances.items()]
+        self._chain = [self._create_genesis_block(transactions)]
+    
+    def _create_genesis_block(self, transactions):
+        return Block(transactions, None)
+    
+    def _get_latest_block(self):
+        return self._chain[-1]
+    
     def add_transaction(self, transaction):
-        if not transaction.is_valid():
-            raise ValueError("Transaction is not valid")
-        if self.balances.get(transaction.sender, 0) < transaction.amount:
-            raise ValueError("Not enough funds")
-        self.pending_transactions.append(transaction)
-    def mine_block(self, miner_address):
-        # Add reward for miners
-        reward_transaction = Transaction("SYSTEM", miner_address, self.reward)
-        self.pending_transactions.append(reward_transaction)
-        # Creating new block
-        block = Block(len(self.chain), [str(tx.__dict__) for tx in self.pending_transactions],
-        self.get_latest_block().hash)
-        block.mine_block(self.difficulty)
-        self.chain.append(block)
-        # Update balance
-        for tx in self.pending_transactions:
-            if tx.sender != "SYSTEM":
-                self.balances[tx.sender] -= tx.amount
-                self.balances[tx.receiver] = self.balances.get(tx.receiver, 0) + tx.amount
-        self.pending_transactions = []
+        if self._balances.get(transaction.sender, 0) < transaction.amount:
+            raise ValueError(f"Not enough funds: the {transaction.sender} address has a balance of {self._balances.get(transaction.sender, 0)} and cannot send {transaction.amount}.")
+        self._pending_transactions.append(transaction)
 
-    def add_block(self, transactions):
-        previous_block = self.get_latest_block()
-        new_block = Block(len(self.chain), transactions, previous_block.hash)
-        new_block.mine_block(self.difficulty)
-        self.chain.append(new_block)
-    def validate_chain(self):
-        for i in range(1, len(self.chain)):
-            current_block = self.chain[i]
-            previous_block = self.chain[i - 1]
+        if(len(self._pending_transactions) == 10):
+            print("10 pending transactions, calling mine_block()")
+            self.mine_block()
+    
+    def mine_block(self):
+        transactions_for_block = self._pending_transactions[:10]
+        self._pending_transactions = self._pending_transactions[10:]
+
+        block = Block(
+            [str(tx) for tx in transactions_for_block], 
+            self._get_latest_block().hash
+        )
+
+        self._chain.append(block)
+
+        # Update balance
+        for tx in transactions_for_block:
+            self._balances[tx.receiver] = self._balances.get(tx.receiver, 0) + tx.amount
+            if tx.sender != "SYSTEM":
+                self._balances[tx.sender] -= tx.amount
+                
+    
+    def validate_blockchain(self):
+        print("Checking blockchain with peer nodes.")
+        for i in range(1, len(self._chain)):
+            current_block = self._chain[i]
+            previous_block = self._chain[i - 1]
             # Checking hash of current block
             if current_block.hash != current_block.calculate_hash():
                 return False
             # Checking connection to previous block
-            if current_block.previous_hash != previous_block.hash:
+            if current_block.previous_hash != previous_block.calculate_hash():
                 return False
         return True
+    

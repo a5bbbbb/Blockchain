@@ -1,30 +1,50 @@
 from transaction import Transaction
 from blockchain import Blockchain
-blockchain = Blockchain()
-# Add transactions# blockchain.add_block(["ViKtor sent 10 coins to Batyrkhan", "Batyrkhan sent Viktor 5 coins"])
-# blockchain.add_block(["Viktor sent Islambek 3 coins"])
+
+
 def main():
-    print("Blockchain validate?", blockchain.validate_chain())
-    blockchain.balances["Viktor"] = 100
-    blockchain.balances["Batyrkhan"] = 50
-    tx1 = Transaction("Viktor", "Batyrkhan", 30)
-    tx1.sign_transaction("Viktor")
-    tx2 = Transaction("Batyrkhan", "Viktor", 10)
-    tx2.sign_transaction("Batyrkhan")
+    blockchain = Blockchain({
+        "Viktor": 100, 
+        "Batyrkhan": 50,
+        "Islambek": 1000
+    })
+    
+    txs = [
+        Transaction("Viktor", "Batyrkhan", 30),
+        Transaction("Batyrkhan", "Viktor", 10),
+        Transaction("Islambek", "Dilyara", 10),
+        Transaction("Islambek", "Sanzhar", 13),
+        Transaction("Islambek", "Seraphim", 100), # 5
+        Transaction("Islambek", "Nurdaulet", 10),
+        Transaction("Islambek", "Viktor", 10),
+        Transaction("Islambek", "Batyrkhan", 10),
+        Transaction("Viktor", "Sanzhar", 10),
+        Transaction("Islambek", "Daulet", 10), # 10
+        Transaction("Sanzhar", "Islambek", 10),
+        Transaction("Dilyara", "Seraphim", 10),
+    ]
+
+    
     # Add transaction to the pool
-    blockchain.add_transaction(tx1)
-    blockchain.add_transaction(tx2)
+    for tx in txs:
+        blockchain.add_transaction(tx)
+    
     # Mining block
-    blockchain.mine_block("Miner1")
-    print("Balances:", blockchain.balances)
+    blockchain.mine_block()
+    print("Balances:", blockchain._balances)
+
+    print(f"Blockchain_validate: {blockchain.validate_blockchain()}")
+    
     # Print blocks
-    for block in blockchain.chain:
-        print(f"Block {block.index}")
+    i = 0
+    for block in blockchain._chain:
+        print(f"Block {i}")
         print(f"Hash: {block.hash}")
         print(f"Previous hash: {block.previous_hash}")
         print(f"Root of Merkle tree: {block.merkle_root}")
-        print(f"Transaction: {block.transactions}")
+        print(f"Transactions: {block.transactions}")
         print("----")
+        i+=1
 
 if __name__ == "__main__":    
     main()
