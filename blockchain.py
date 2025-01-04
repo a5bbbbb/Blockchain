@@ -3,7 +3,8 @@ from transaction import Transaction
 class Blockchain:
     def __init__(self, balances):
         '''
-        To create a blockchain object it is needed to provide a dictionary balances with no more than 10 entries with keys denoting addresses and values specifying the amount.
+        To create a blockchain object it is needed to provide a dictionary balances with no more 
+        than 10 entries with keys denoting addresses and values specifying the amount.
         The balances will be hardcoded into the genesis block as transactions from the SYSTEM address.
         '''
         self._pending_transactions = []
@@ -19,7 +20,11 @@ class Blockchain:
     
     def add_transaction(self, transaction):
         if self._balances.get(transaction.sender, 0) < transaction.amount:
-            raise ValueError(f"Not enough funds: the {transaction.sender} address has a balance of {self._balances.get(transaction.sender, 0)} and cannot send {transaction.amount}.")
+            raise ValueError(
+                f"Not enough funds: " +
+                f"the {transaction.sender} address has a balance of {self._balances.get(transaction.sender, 0)} " +
+                f"and cannot send {transaction.amount}."
+                            )
         self._pending_transactions.append(transaction)
 
         if(len(self._pending_transactions) == 10):
@@ -27,6 +32,8 @@ class Blockchain:
             self.mine_block()
     
     def mine_block(self):
+        if(len(self._pending_transactions) == 0):
+            raise BufferError("No transactions pending")
         transactions_for_block = self._pending_transactions[:10]
         self._pending_transactions = self._pending_transactions[10:]
 

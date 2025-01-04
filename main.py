@@ -31,9 +31,10 @@ def main():
     
     # Mining block
     blockchain.mine_block()
+    
     print("Balances:", blockchain._balances)
 
-    print(f"Blockchain_validate: {blockchain.validate_blockchain()}")
+    print(f"Validate_blockchain: {blockchain.validate_blockchain()}")
     
     # Print blocks
     i = 0
