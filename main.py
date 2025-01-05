@@ -3,40 +3,44 @@ from blockchain import Blockchain
 from wallet import Wallet
 
 def main():
-    wallet = Wallet()
-    print(f"Wallet public key: {wallet.public_key}")
+    islambek = Wallet()
+    viktor = Wallet()
+    batyrkhan = Wallet()
+    seraphim = Wallet()
+    senders = [islambek, viktor, batyrkhan, seraphim]
+    print(f"Wallet public key: {islambek.public_key}")
 
     blockchain = Blockchain({
-        wallet.public_key: 1000,
-        "Viktor": 100, 
-        "Batyrkhan": 50,
-        "Dilyara": 10,
-        "Sanzhar": 10,
-        "Seraphim": 43,
-        "Nurdaulet": 15,
-        "Daulet": 20,
+        islambek.public_key: 1000,
+        viktor.public_key: 1000,
+        batyrkhan.public_key: 1000,
+        seraphim.public_key: 1000,
     })
     
     txs = [
-        Transaction(wallet.public_key, "Dilyara", 10),
-        Transaction(wallet.public_key, "Sanzhar", 13),
-        Transaction(wallet.public_key, "Seraphim", 100),
-        Transaction(wallet.public_key, "Nurdaulet", 10),
-        Transaction(wallet.public_key, "Viktor", 10), # 5
-        Transaction(wallet.public_key, "Batyrkhan", 10),
-        Transaction(wallet.public_key, "Daulet", 10),
-        Transaction("Seraphim", wallet.public_key, 10),
-        Transaction("Nurdaulet", wallet.public_key,  10),
-        Transaction("Viktor", wallet.public_key,  10),  # 10
-        Transaction("Batyrkhan", wallet.public_key,  10),
-        Transaction(wallet.public_key, "Seraphim", 10),
+        Transaction(islambek.public_key, viktor.public_key, 10),
+        Transaction(islambek.public_key, seraphim.public_key, 100),
+        Transaction(islambek.public_key, viktor.public_key, 10),
+        Transaction(islambek.public_key, batyrkhan.public_key, 10),
+        Transaction(seraphim.public_key, islambek.public_key, 10),
+        Transaction(viktor.public_key, islambek.public_key,  10), 
+        Transaction(batyrkhan.public_key, islambek.public_key,  10),
+        Transaction(islambek.public_key, seraphim.public_key, 10),
+        Transaction(batyrkhan.public_key, viktor.public_key,  10),
+        Transaction(seraphim.public_key, viktor.public_key, 10),
     ]
 
     
     # Add transaction to the pool
     for tx in txs:
-        tx.sign(wallet.private_key)
-        blockchain.add_transaction(tx)
+        for sender in senders:
+            if sender.public_key == tx.sender: 
+                tx.sign(sender.private_key)
+                blockchain.add_transaction(tx)
+    
+    tx = Transaction(seraphim.public_key, viktor.public_key, 10)
+    tx.sign(seraphim.private_key)
+    blockchain.add_transaction(tx)
     
     # Mining block
     blockchain.mine_block()
