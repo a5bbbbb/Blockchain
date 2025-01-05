@@ -10,21 +10,26 @@ def main():
         wallet.public_key: 1000,
         "Viktor": 100, 
         "Batyrkhan": 50,
+        "Dilyara": 10,
+        "Sanzhar": 10,
+        "Seraphim": 43,
+        "Nurdaulet": 15,
+        "Daulet": 20,
     })
     
     txs = [
-        Transaction("Viktor", "Batyrkhan", 30),
-        Transaction("Batyrkhan", "Viktor", 10),
         Transaction(wallet.public_key, "Dilyara", 10),
         Transaction(wallet.public_key, "Sanzhar", 13),
-        Transaction(wallet.public_key, "Seraphim", 100), # 5
+        Transaction(wallet.public_key, "Seraphim", 100),
         Transaction(wallet.public_key, "Nurdaulet", 10),
-        Transaction(wallet.public_key, "Viktor", 10),
+        Transaction(wallet.public_key, "Viktor", 10), # 5
         Transaction(wallet.public_key, "Batyrkhan", 10),
-        Transaction("Viktor", "Sanzhar", 10),
-        Transaction(wallet.public_key, "Daulet", 10), # 10
-        Transaction("Sanzhar", wallet.public_key, 10),
-        Transaction("Dilyara", "Seraphim", 10),
+        Transaction(wallet.public_key, "Daulet", 10),
+        Transaction("Seraphim", wallet.public_key, 10),
+        Transaction("Nurdaulet", wallet.public_key,  10),
+        Transaction("Viktor", wallet.public_key,  10),  # 10
+        Transaction("Batyrkhan", wallet.public_key,  10),
+        Transaction(wallet.public_key, "Seraphim", 10),
     ]
 
     

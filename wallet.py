@@ -17,7 +17,6 @@ class Wallet:
         print(f"Transaction created and saved: {transaction}")
 
     def save_transaction(self, transaction):
-        # Saving transactions in JSON formate to the transactions.txt.
         with open(self.database_file, "a") as db:  # "a" for data to the file
             db.write(json.dumps({
                 "sender": transaction.sender,
@@ -27,7 +26,6 @@ class Wallet:
             }) + "\n")
 
     def get_transactions(self):
-        #Loading transactions from transactions.txt.
         transactions = []
         try:
             with open(self.database_file, "r") as db:
