@@ -1,32 +1,36 @@
 from transaction import Transaction
 from blockchain import Blockchain
-
+from wallet import Wallet
 
 def main():
+    wallet = Wallet()
+    print(f"Wallet public key: {wallet.public_key}")
+
     blockchain = Blockchain({
+        wallet.public_key: 1000,
         "Viktor": 100, 
         "Batyrkhan": 50,
-        "Islambek": 1000
     })
     
     txs = [
         Transaction("Viktor", "Batyrkhan", 30),
         Transaction("Batyrkhan", "Viktor", 10),
-        Transaction("Islambek", "Dilyara", 10),
-        Transaction("Islambek", "Sanzhar", 13),
-        Transaction("Islambek", "Seraphim", 100), # 5
-        Transaction("Islambek", "Nurdaulet", 10),
-        Transaction("Islambek", "Viktor", 10),
-        Transaction("Islambek", "Batyrkhan", 10),
+        Transaction(wallet.public_key, "Dilyara", 10),
+        Transaction(wallet.public_key, "Sanzhar", 13),
+        Transaction(wallet.public_key, "Seraphim", 100), # 5
+        Transaction(wallet.public_key, "Nurdaulet", 10),
+        Transaction(wallet.public_key, "Viktor", 10),
+        Transaction(wallet.public_key, "Batyrkhan", 10),
         Transaction("Viktor", "Sanzhar", 10),
-        Transaction("Islambek", "Daulet", 10), # 10
-        Transaction("Sanzhar", "Islambek", 10),
+        Transaction(wallet.public_key, "Daulet", 10), # 10
+        Transaction("Sanzhar", wallet.public_key, 10),
         Transaction("Dilyara", "Seraphim", 10),
     ]
 
     
     # Add transaction to the pool
     for tx in txs:
+        tx.sign(wallet.private_key)
         blockchain.add_transaction(tx)
     
     # Mining block

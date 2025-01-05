@@ -1,5 +1,7 @@
 from block import Block
 from transaction import Transaction
+
+
 class Blockchain:
     def __init__(self, balances):
         '''
@@ -49,7 +51,19 @@ class Blockchain:
             self._balances[tx.receiver] = self._balances.get(tx.receiver, 0) + tx.amount
             if tx.sender != "SYSTEM":
                 self._balances[tx.sender] -= tx.amount
-                
+
+    def load_transactions(self, wallet):
+        # Loading transactions from database
+        transactions = wallet.get_transactions()
+        for transaction in transactions:
+            try:
+                if transaction.verify():
+                    self.add_transaction(transaction)
+                    print(f"Transaction added: {transaction}")
+                else:
+                    print(f"Invalid transaction skipped: {transaction}")
+            except ValueError as e:
+                print(f"Transaction verification failed: {e}")
     
     def validate_blockchain(self):
         print("Checking blockchain with peer nodes.")

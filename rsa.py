@@ -1,6 +1,7 @@
 import random
 class RSA:
-    def _is_prime(self, num):
+    @staticmethod
+    def _is_prime(num):
         if num <= 1:
             return False
         for i in range(2, int(num ** 0.5) + 1):
@@ -8,18 +9,21 @@ class RSA:
                 return False
         return True
 
+    @staticmethod
     def _generate_prime():
         while True:
             num = random.randint(1000, 1000000)
             if RSA._is_prime(num):
                 return num
 
-    def _gcd(self, a, b):
+    @staticmethod
+    def _gcd(a, b):
         while b:
             a, b = b, a % b
         return a
 
-    def _mod_inverse(self, a, m):
+    @staticmethod
+    def _mod_inverse( a, m):
         m0, x0, x1 = m, 0, 1
         while a > 1:
             q = a // m
