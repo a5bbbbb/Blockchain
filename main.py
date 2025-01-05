@@ -36,10 +36,12 @@ def main():
         for sender in senders:
             if sender.public_key == tx.sender: 
                 tx.sign(sender.private_key)
+                sender.save_transaction(tx)
                 blockchain.add_transaction(tx)
     
     tx = Transaction(seraphim.public_key, viktor.public_key, 10)
     tx.sign(seraphim.private_key)
+    seraphim.save_transaction(tx)
     blockchain.add_transaction(tx)
     
     # Mining block
